@@ -5,6 +5,9 @@ from flask_jwt import JWT, jwt_required, current_identity
 from configs import app
 
 jwt = JWT(app, authenticate, identity)
+jwt.jwt_payload_handler(make_payload(app))
+
+
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
@@ -18,4 +21,3 @@ def show():
     r = {'success': True, 'content': 'abc{}'.format(id), 'identity': current_identity.username}
     return json.dumps(r)
 
-jwt.jwt_payload_handler(make_payload(app))
