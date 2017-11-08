@@ -1,10 +1,11 @@
-class User(object):
-    def __init__(self, id, username, password):
-        self.username = username
-        self.password = password
-        self.id = id
+from peewee import *
+from configs import db
+
+class User(Model):
+    username = CharField()
+    password = CharField()
     
-    def __str__(self):
-        return 'User(\'{}\')'.format(self.username)
+    class Meta:
+        database = db
     
 

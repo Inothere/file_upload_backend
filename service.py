@@ -1,19 +1,23 @@
-from consts import user_table
+from models import User
 from werkzeug.security import safe_str_cmp
 import datetime
 
 def authenticate(username, password):
-    user = user_table.get(username, None)
-    if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
-        return user
-    return None
+    try:
+        query_results = User.select().where(User.username==username)
+        user = query_results[0] if query_results else None
+        if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
+            return user
+        return None
+    except User.DoesNotExist:
+        return None
 
 def identity(payload):
-    user = payload.get('identity')
-    for k in user_table:
-        if user_table[k].id == user.get('id'):
-            return user_table[k]
-    return None
+    user_obj = payload.get('identity')
+    try:
+        return User.get(User.username == user_obj.get('name'))
+    except User.DoesNotExist:
+        return None
 
 def make_payload(app): 
     def func(identity):
